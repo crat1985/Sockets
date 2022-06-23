@@ -1,11 +1,8 @@
-
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Client {
@@ -32,7 +29,22 @@ public class Client {
 			ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
 			out.writeObject(infos);
 			ObjectInputStream in = new ObjectInputStream(s.getInputStream());
-			System.out.println((boolean) in.readObject() ? "Connexion réussie !" : "Informations incorrectes");
+			boolean response = (boolean) in.readObject();
+			if(response) {
+				System.out.println("Connexion réussie !");
+				System.out.println("Bienvenue sur ce chat !");
+				while(s.isConnected()) {
+					System.out.print("Entrez votre message : ");
+					String msg = "";
+					Scanner sc2 = new Scanner(System.in);
+					msg = sc2.nextLine();
+					ObjectOutputStream ois = new ObjectOutputStream(s.getOutputStream());
+					ois.writeObject(msg);
+				}
+			} else {
+				System.out.println("Informations de connexion incorrectes.");
+				return;
+			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}

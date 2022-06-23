@@ -1,5 +1,3 @@
-
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -35,6 +33,10 @@ public class Server {
 				if(infos.get(infosAsked.get(0)) != null) {
 					if(infos.get(askedPseudo).equals(askedPassword)) {
 						oos.writeObject(true);
+						while(client.isConnected()) {
+							ObjectInputStream out = new ObjectInputStream(client.getInputStream());
+						 	System.out.println(askedPseudo+": "+(String) out.readObject());
+						}
 					} else {
 						oos.writeObject(false);
 					}
@@ -42,7 +44,7 @@ public class Server {
 					oos.writeObject(false);
 				}
 			}
-		} catch (EOFException | StreamCorruptedException | SocketException e) {
+		} catch (EOFException | StreamCorruptedException | SocketException | StackOverflowError e) {
 			main(null);
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
